@@ -1,6 +1,8 @@
 package brainfuck
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var executableCommands = map[rune]func(*memmory){
 	//Increment operation
