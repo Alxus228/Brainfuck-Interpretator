@@ -3,7 +3,7 @@ package brainfuck
 import "fmt"
 
 type command interface {
-	execute(mem *memmory)
+	execute()
 }
 
 type operation struct {
