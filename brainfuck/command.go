@@ -1,5 +1,7 @@
 package brainfuck
 
+import "fmt"
+
 type command interface {
 	execute(mem *memmory)
 }
@@ -20,4 +22,15 @@ func (op *incrementOperation) execute() {
 
 func (op *decrementOperation) execute() {
 	op.mem.cells[op.mem.pointer]--
+}
+func (op *incrementDataPointerOperation) execute() {
+	op.mem.pointer++
+}
+
+func (op *decrementDataPointerOperation) execute() {
+	op.mem.pointer--
+}
+
+func (op *outputOperation) execute() {
+	fmt.Printf("%c", op.mem.cells[op.mem.pointer])
 }

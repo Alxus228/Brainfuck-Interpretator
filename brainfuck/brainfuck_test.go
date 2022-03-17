@@ -6,6 +6,7 @@ import (
 	"testing"
 )
 
+//Test of the Interpretator
 func TestInterpretate(t *testing.T) {
 	rescueStdout := os.Stdout
 	r, w, _ := os.Pipe()
