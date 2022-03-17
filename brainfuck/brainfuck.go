@@ -1,29 +1,34 @@
 package brainfuck
 
+import (
+	"fmt"
+	"reflect"
+)
+
 var executableCommands = map[rune]command{
 	//Increment operation
-	'+': new(incrementOperation),
+	'+': incrementOperation{operation{mem: &memmorySet}},
 	//Decrement operation
-	'-': new(decrementOperation),
+	'-': decrementOperation{operation{mem: &memmorySet}},
 	//Increment data pointer operation
-	'>': new(incrementDataPointerOperation),
+	'>': incrementDataPointerOperation{operation{mem: &memmorySet}},
 	//Decrement data pointer operation
-	'<': new(decrementDataPointerOperation),
+	'<': decrementDataPointerOperation{operation{mem: &memmorySet}},
 	//Output operation
-	'.': new(outputOperation),
+	'.': outputOperation{operation{mem: &memmorySet}},
 	//Input operation
-	',': new(inputOperation),
+	',': inputOperation{operation{mem: &memmorySet}},
 	//The beginning of loop
-	'[': new(loopOperation),
+	'[': loopOperation{operation: operation{mem: &memmorySet}},
 	//The end of loop
-	']': new(loopCheckLoopBordersOperation),
+	']': loopCheckLoopBordersOperation{&currentLoop[0]},
 	//All the functions implemented after the ']', are not implemented in original Brainfuck language
 	//Clear operation
-	'0': new(zeroOperation),
+	'0': zeroOperation{operation{mem: &memmorySet}},
 	//Copy operation
-	'c': new(copyOperation),
+	'c': copyOperation{operation{mem: &memmorySet}},
 	//Paste operation
-	'p': new(pasteOperation),
+	'p': pasteOperation{operation{mem: &memmorySet}},
 }
 
 var memmorySet memmory
@@ -31,13 +36,11 @@ var codePointer int
 
 var copyPasteAccumulator byte
 var commands []command
-var currentLoop []loopOperation
+var currentLoop = []loopOperation{
+	{operation: operation{mem: &memmorySet}},
+}
 
 func Brainfuck(code string) {
-
-	//creating main loop
-	mainLoop := loopOperation{operation: operation{mem: &memmorySet}}
-	currentLoop = append(currentLoop, mainLoop)
 
 	interpetate(code)
 	compile()
@@ -51,8 +54,8 @@ func interpetate(code string) {
 		case loopOperation:
 			currentLoop = append([]loopOperation{t}, currentLoop...)
 		case loopCheckLoopBordersOperation:
+			currentLoop[1].innerLoop = append(currentLoop[1].innerLoop, t, currentLoop[0], t)
 			currentLoop = currentLoop[1:]
-			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, newCommand)
 		default:
 			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, newCommand)
 		}
@@ -62,5 +65,6 @@ func interpetate(code string) {
 func compile() {
 	for _, com := range currentLoop[0].innerLoop {
 		com.execute()
+		fmt.Println(reflect.TypeOf(com))
 	}
 }
