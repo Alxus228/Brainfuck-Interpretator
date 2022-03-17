@@ -16,6 +16,9 @@ type incrementDataPointerOperation struct{ operation } // >
 type decrementDataPointerOperation struct{ operation } // <
 type outputOperation struct{ operation }               // .
 type inputOperation struct{ operation }                // ,
+type zeroOperation struct{ operation }                 // 0
+type copyOperation struct{ operation }                 // c
+type pasteOperation struct{ operation }                // p
 
 func (op *incrementOperation) execute() {
 	op.mem.cells[op.mem.pointer]++
@@ -38,4 +41,18 @@ func (op *outputOperation) execute() {
 
 func (op *inputOperation) execute() {
 	fmt.Scanf("%c", &op.mem.cells[op.mem.pointer])
+}
+
+func (op *zeroOperation) execute() {
+	op.mem.cells[op.mem.pointer] = 0
+}
+
+func (op *copyOperation) execute() {
+	copyPasteAccumulator = op.mem.cells[op.mem.pointer]
+}
+
+func (op *pasteOperation) execute() {
+	if copyPasteAccumulator != 0 {
+		op.mem.cells[op.mem.pointer] = copyPasteAccumulator
+	}
 }
