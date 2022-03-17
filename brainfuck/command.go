@@ -15,6 +15,7 @@ type decrementOperation struct{ operation }            // -
 type incrementDataPointerOperation struct{ operation } // >
 type decrementDataPointerOperation struct{ operation } // <
 type outputOperation struct{ operation }               // .
+type inputOperation struct{ operation }                // ,
 
 func (op *incrementOperation) execute() {
 	op.mem.cells[op.mem.pointer]++
@@ -33,4 +34,8 @@ func (op *decrementDataPointerOperation) execute() {
 
 func (op *outputOperation) execute() {
 	fmt.Printf("%c", op.mem.cells[op.mem.pointer])
+}
+
+func (op *inputOperation) execute() {
+	fmt.Scanf("%c", &op.mem.cells[op.mem.pointer])
 }
