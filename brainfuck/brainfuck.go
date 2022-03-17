@@ -79,6 +79,7 @@ type loop struct {
 	executing bool
 }
 
+//function to call
 func Interpetate(code string) {
 	//creating "main loop"
 	loopsStack = append(loopsStack, *new(loop))
