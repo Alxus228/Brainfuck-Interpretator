@@ -52,7 +52,7 @@ func (op *copyOperation) execute() {
 }
 
 func (op *pasteOperation) execute() {
-	if copyPasteAccumulator != 1 {
+	if copyPasteAccumulator != 0 {
 		op.mem.cells[op.mem.pointer] = copyPasteAccumulator
 	}
 }
