@@ -3,7 +3,7 @@ package brainfuck
 import "fmt"
 
 type command interface {
-	execute(mem *memmory)
+	execute()
 }
 
 type operation struct {
@@ -19,6 +19,10 @@ type inputOperation struct{ operation }                // ,
 type zeroOperation struct{ operation }                 // 0
 type copyOperation struct{ operation }                 // c
 type pasteOperation struct{ operation }                // p
+type loopOperation struct {
+	innerLoop []command
+	repeat    bool
+}
 
 func (op *incrementOperation) execute() {
 	op.mem.cells[op.mem.pointer]++
@@ -54,5 +58,13 @@ func (op *copyOperation) execute() {
 func (op *pasteOperation) execute() {
 	if copyPasteAccumulator != 0 {
 		op.mem.cells[op.mem.pointer] = copyPasteAccumulator
+	}
+}
+
+func (op *loopOperation) execute() {
+	for op.repeat {
+		for _, innerOperation := range op.innerLoop {
+			innerOperation.execute()
+		}
 	}
 }
