@@ -7,19 +7,22 @@ type command interface {
 }
 
 type operation struct {
-	mem *memmory
+	mem     *memmory
+	execute func()
 }
 
-type incrementOperation struct{ operation }            // +
-type decrementOperation struct{ operation }            // -
-type incrementDataPointerOperation struct{ operation } // >
-type decrementDataPointerOperation struct{ operation } // <
-type outputOperation struct{ operation }               // .
-type inputOperation struct{ operation }                // ,
-type zeroOperation struct{ operation }                 // 0
-type copyOperation struct{ operation }                 // c
-type pasteOperation struct{ operation }                // p
-type loopOperation struct {
+type incrementOperation struct{ operation }                                // +
+type decrementOperation struct{ operation }                                // -
+type incrementDataPointerOperation struct{ operation }                     // >
+type decrementDataPointerOperation struct{ operation }                     // <
+type outputOperation struct{ operation }                                   // .
+type inputOperation struct{ operation }                                    // ,
+type zeroOperation struct{ operation }                                     // 0
+type copyOperation struct{ operation }                                     // c
+type pasteOperation struct{ operation }                                    // p
+type loopCheckLoopBordersOperation struct{ innerOperation *loopOperation } // ]
+type loopOperation struct {                                                // [
+	operation
 	innerLoop []command
 	repeat    bool
 }
@@ -66,5 +69,11 @@ func (op *loopOperation) execute() {
 		for _, innerOperation := range op.innerLoop {
 			innerOperation.execute()
 		}
+	}
+}
+
+func (op *loopCheckLoopBordersOperation) execute() {
+	if op.innerOperation.mem.cells[op.innerOperation.mem.pointer] != 0 {
+		op.innerOperation.repeat = true
 	}
 }

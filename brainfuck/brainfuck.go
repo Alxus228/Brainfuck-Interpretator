@@ -1,78 +1,36 @@
 package brainfuck
 
-import (
-	"fmt"
-)
-
-var executableCommands = map[rune]func(*memmory){
+var executableCommands = map[rune]command{
 	//Increment operation
-	'+': func(mem *memmory) {
-		mem.cells[mem.pointer]++
-	},
+	'+': new(incrementOperation),
 	//Decrement operation
-	'-': func(mem *memmory) {
-		mem.cells[mem.pointer]--
-	},
+	'-': new(decrementOperation),
 	//Increment data pointer operation
-	'>': func(mem *memmory) {
-		mem.pointer++
-	},
+	'>': new(incrementDataPointerOperation),
 	//Decrement data pointer operation
-	'<': func(mem *memmory) {
-		mem.pointer--
-	},
+	'<': new(decrementDataPointerOperation),
 	//Output operation
-	'.': func(mem *memmory) {
-		fmt.Printf("%c", mem.cells[mem.pointer])
-	},
+	'.': new(outputOperation),
 	//Input operation
-	',': func(mem *memmory) {
-		fmt.Scanf("%c", &mem.cells[mem.pointer])
-	},
+	',': new(inputOperation),
 	//The beginning of loop
-	'[': func(mem *memmory) {
-		if mem.cells[mem.pointer] == 0 {
-			if loopsStack[0].openIndex == codePointer {
-				loopsStack[0].executing = false
-			}
-		} else {
-			if loopsStack[0].openIndex != codePointer {
-				loopsStack = append(make([]loop, 1), loopsStack...)
-				loopsStack[0].openIndex = codePointer
-				loopsStack[0].executing = true
-			}
-		}
-	},
+	'[': new(loopOperation),
 	//The end of loop
-	']': func(mem *memmory) {
-		if mem.cells[mem.pointer] == 0 || !loopsStack[0].executing {
-			loopsStack = loopsStack[1:]
-		} else {
-			// - 1 here is necessary because we increment codePointer each iteration
-			codePointer = loopsStack[0].openIndex - 1
-		}
-	},
+	']': new(loopCheckLoopBordersOperation),
 	//All the functions implemented after the ']', are not implemented in original Brainfuck language
 	//Clear operation
-	'0': func(mem *memmory) {
-		mem.cells[mem.pointer] = 0
-	},
+	'0': new(zeroOperation),
 	//Copy operation
-	'c': func(mem *memmory) {
-		copyPasteAccumulator = mem.cells[mem.pointer]
-	},
+	'c': new(copyOperation),
 	//Paste operation
-	'p': func(mem *memmory) {
-		if copyPasteAccumulator != 0 {
-			mem.cells[mem.pointer] = copyPasteAccumulator
-		}
-	},
+	'p': new(pasteOperation),
 }
 
 var memmorySet memmory
 var codePointer int
 var loopsStack []loop
 var copyPasteAccumulator byte
+var commands []command
 
 type loop struct {
 	openIndex int
@@ -86,8 +44,13 @@ func Interpetate(code string) {
 	loopsStack[0].executing = true
 
 	for codePointer = 0; codePointer < len(code); codePointer++ {
-		if loopsStack[0].executing {
-			executableCommands[rune(code[codePointer])](&memmorySet)
+		var newCommand = executableCommands[rune(code[codePointer])]
+
+		switch t := newCommand.(type) {
+		case loopOperation:
+			t.innerLoop = append(t.innerLoop, newCommand)
+		default:
+			commands = append(commands, newCommand)
 		}
 	}
 }
