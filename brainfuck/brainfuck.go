@@ -28,29 +28,39 @@ var executableCommands = map[rune]command{
 
 var memmorySet memmory
 var codePointer int
-var loopsStack []loop
+
 var copyPasteAccumulator byte
 var commands []command
+var currentLoop []loopOperation
 
-type loop struct {
-	openIndex int
-	executing bool
+func Brainfuck(code string) {
+
+	//creating main loop
+	mainLoop := loopOperation{operation: operation{mem: &memmorySet}}
+	currentLoop = append(currentLoop, mainLoop)
+
+	interpetate(code)
+	compile()
 }
 
 //function to call
-func Interpetate(code string) {
-	//creating "main loop"
-	loopsStack = append(loopsStack, *new(loop))
-	loopsStack[0].executing = true
-
+func interpetate(code string) {
 	for codePointer = 0; codePointer < len(code); codePointer++ {
 		var newCommand = executableCommands[rune(code[codePointer])]
-
 		switch t := newCommand.(type) {
 		case loopOperation:
-			t.innerLoop = append(t.innerLoop, newCommand)
+			currentLoop = append([]loopOperation{t}, currentLoop...)
+		case loopCheckLoopBordersOperation:
+			currentLoop = currentLoop[1:]
+			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, newCommand)
 		default:
-			commands = append(commands, newCommand)
+			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, newCommand)
 		}
+	}
+}
+
+func compile() {
+	for _, com := range currentLoop[0].innerLoop {
+		com.execute()
 	}
 }

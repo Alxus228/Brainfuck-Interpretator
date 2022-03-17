@@ -7,12 +7,12 @@ import (
 )
 
 //Test of the Interpretator
-func TestInterpretate(t *testing.T) {
+func TestBrainfuck(t *testing.T) {
 	rescueStdout := os.Stdout
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 
-	Interpetate("+++++c>p++++++[-<+>]<.")
+	Brainfuck("+++++c>p++++++[-<+>]<.")
 
 	w.Close()
 	out, _ := ioutil.ReadAll(r)
