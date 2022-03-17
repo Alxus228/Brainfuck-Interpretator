@@ -27,44 +27,44 @@ type loopOperation struct {                                                // [
 	repeat    bool
 }
 
-func (op *incrementOperation) execute() {
+func (op incrementOperation) execute() {
 	op.mem.cells[op.mem.pointer]++
 }
 
-func (op *decrementOperation) execute() {
+func (op decrementOperation) execute() {
 	op.mem.cells[op.mem.pointer]--
 }
-func (op *incrementDataPointerOperation) execute() {
+func (op incrementDataPointerOperation) execute() {
 	op.mem.pointer++
 }
 
-func (op *decrementDataPointerOperation) execute() {
+func (op decrementDataPointerOperation) execute() {
 	op.mem.pointer--
 }
 
-func (op *outputOperation) execute() {
+func (op outputOperation) execute() {
 	fmt.Printf("%c", op.mem.cells[op.mem.pointer])
 }
 
-func (op *inputOperation) execute() {
+func (op inputOperation) execute() {
 	fmt.Scanf("%c", &op.mem.cells[op.mem.pointer])
 }
 
-func (op *zeroOperation) execute() {
+func (op zeroOperation) execute() {
 	op.mem.cells[op.mem.pointer] = 0
 }
 
-func (op *copyOperation) execute() {
+func (op copyOperation) execute() {
 	copyPasteAccumulator = op.mem.cells[op.mem.pointer]
 }
 
-func (op *pasteOperation) execute() {
+func (op pasteOperation) execute() {
 	if copyPasteAccumulator != 0 {
 		op.mem.cells[op.mem.pointer] = copyPasteAccumulator
 	}
 }
 
-func (op *loopOperation) execute() {
+func (op loopOperation) execute() {
 	for op.repeat {
 		for _, innerOperation := range op.innerLoop {
 			innerOperation.execute()
@@ -72,7 +72,7 @@ func (op *loopOperation) execute() {
 	}
 }
 
-func (op *loopCheckLoopBordersOperation) execute() {
+func (op loopCheckLoopBordersOperation) execute() {
 	if op.innerOperation.mem.cells[op.innerOperation.mem.pointer] != 0 {
 		op.innerOperation.repeat = true
 	}
