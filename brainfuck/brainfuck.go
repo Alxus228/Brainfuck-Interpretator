@@ -1,10 +1,5 @@
 package brainfuck
 
-import (
-	"fmt"
-	"reflect"
-)
-
 var executableCommands = map[rune]command{
 	//Increment operation
 	'+': incrementOperation{operation{mem: &memmorySet}},
@@ -72,20 +67,23 @@ func compile() {
 	for _, com := range currentLoop[0].innerLoop {
 		com.execute()
 
-		fmt.Print(reflect.TypeOf(com))
-		fmt.Print(com)
-		fmt.Printf(" %d %d\n", currentLoop[0].mem.cells[currentLoop[0].mem.pointer], currentLoop[0].mem.pointer)
-		switch t := com.(type) {
-		case loopOperation:
-			fmt.Println(&t.mem, t.repeat)
-			for _, funct := range t.innerLoop {
-				fmt.Print(reflect.TypeOf(funct))
-				fmt.Println(funct)
-				switch s := funct.(type) {
-				case loopCheckBordersOperation:
-					fmt.Println(&s.innerOperation.mem, s.innerOperation.repeat)
+		//debug
+		/*
+			fmt.Print(reflect.TypeOf(com))
+			fmt.Print(com)
+			fmt.Printf(" %d %d\n", currentLoop[0].mem.cells[currentLoop[0].mem.pointer], currentLoop[0].mem.pointer)
+			switch t := com.(type) {
+			case loopOperation:
+				fmt.Println(&t.mem, t.repeat)
+				for _, funct := range t.innerLoop {
+					fmt.Print(reflect.TypeOf(funct))
+					fmt.Println(funct)
+					switch s := funct.(type) {
+					case loopCheckBordersOperation:
+						fmt.Println(&s.innerOperation.mem, s.innerOperation.repeat)
+					}
 				}
 			}
-		}
+			/**/
 	}
 }

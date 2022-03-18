@@ -46,9 +46,9 @@ func (op decrementDataPointerOperation) execute() {
 }
 
 func (op outputOperation) execute() {
-	//fmt.Printf("%c", op.mem.cells[op.mem.pointer])
+	fmt.Printf("%c", op.mem.cells[op.mem.pointer])
 	//debug
-	fmt.Printf("%d", op.mem.cells[op.mem.pointer])
+	//fmt.Printf("%d", op.mem.cells[op.mem.pointer])
 }
 
 func (op inputOperation) execute() {
@@ -78,7 +78,8 @@ func (op loopOperation) execute() {
 }
 
 func (op loopCheckBordersOperation) execute() {
-	if op.mem.cells[op.mem.pointer] == 0 {
+	//fmt.Println(op.innerOperation.mem)
+	if op.innerOperation.mem.cells[op.innerOperation.mem.pointer] == 0 {
 		op.innerOperation.repeat = false
 	} else {
 		op.innerOperation.repeat = true
