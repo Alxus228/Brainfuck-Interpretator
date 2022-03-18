@@ -77,13 +77,13 @@ func compile() {
 		fmt.Printf("%d %d\n", memmorySet.pointer, memmorySet.cells[memmorySet.pointer])
 		switch t := com.(type) {
 		case loopOperation:
-			fmt.Println(t.repeat)
+			fmt.Println(t.dontRepeat)
 			for _, funct := range t.innerLoop {
 				fmt.Print(reflect.TypeOf(funct))
 				fmt.Println(funct)
 				switch s := funct.(type) {
 				case loopCheckBordersOperation:
-					fmt.Println(s.innerOperation.repeat)
+					fmt.Println(s.innerOperation.dontRepeat)
 				}
 			}
 		}

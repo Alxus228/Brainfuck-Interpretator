@@ -25,8 +25,8 @@ type loopCheckBordersOperation struct {                // ]
 }
 type loopOperation struct { // [
 	operation
-	innerLoop []command
-	repeat    bool
+	innerLoop  []command
+	dontRepeat bool
 }
 
 func (op incrementOperation) execute(mem *memmory) {
@@ -69,18 +69,22 @@ func (op pasteOperation) execute(mem *memmory) {
 }
 
 func (op loopOperation) execute(mem *memmory) {
-	for op.repeat {
+	for !op.dontRepeat {
 		for _, innerOperation := range op.innerLoop {
 			innerOperation.execute(mem)
 		}
 	}
 }
 
+func (op loopOperation) switchDontRepeat(mem *memmory) {
+	if mem.cells[mem.pointer] == 0 {
+		op.dontRepeat = true
+	} else {
+		op.dontRepeat = false
+	}
+}
+
 func (op loopCheckBordersOperation) execute(mem *memmory) {
 	//fmt.Println(op.innerOperation.mem)
-	if mem.cells[mem.pointer] == 0 {
-		op.innerOperation.repeat = false
-	} else {
-		op.innerOperation.repeat = true
-	}
+	op.innerOperation.switchDontRepeat(mem)
 }
