@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Alxus228/Brainfuck/brainfuck"
+	"github.com/Alxus228/Brainfuck-Inerpreter/brainfuck"
 )
 
 func main() {
