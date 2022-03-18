@@ -11,17 +11,17 @@ type operation struct {
 	execute func()
 }
 
-type incrementOperation struct{ operation }                                // +
-type decrementOperation struct{ operation }                                // -
-type incrementDataPointerOperation struct{ operation }                     // >
-type decrementDataPointerOperation struct{ operation }                     // <
-type outputOperation struct{ operation }                                   // .
-type inputOperation struct{ operation }                                    // ,
-type zeroOperation struct{ operation }                                     // 0
-type copyOperation struct{ operation }                                     // c
-type pasteOperation struct{ operation }                                    // p
-type loopCheckLoopBordersOperation struct{ innerOperation *loopOperation } // ]
-type loopOperation struct {                                                // [
+type incrementOperation struct{ operation }                            // +
+type decrementOperation struct{ operation }                            // -
+type incrementDataPointerOperation struct{ operation }                 // >
+type decrementDataPointerOperation struct{ operation }                 // <
+type outputOperation struct{ operation }                               // .
+type inputOperation struct{ operation }                                // ,
+type zeroOperation struct{ operation }                                 // 0
+type copyOperation struct{ operation }                                 // c
+type pasteOperation struct{ operation }                                // p
+type loopCheckBordersOperation struct{ innerOperation *loopOperation } // ]
+type loopOperation struct {                                            // [
 	operation
 	innerLoop []command
 	repeat    bool
@@ -43,7 +43,9 @@ func (op decrementDataPointerOperation) execute() {
 }
 
 func (op outputOperation) execute() {
-	fmt.Printf("%c", op.mem.cells[op.mem.pointer])
+	//fmt.Printf("%c", op.mem.cells[op.mem.pointer])
+	//debug
+	fmt.Printf("%d", op.mem.cells[op.mem.pointer])
 }
 
 func (op inputOperation) execute() {
@@ -72,8 +74,10 @@ func (op loopOperation) execute() {
 	}
 }
 
-func (op loopCheckLoopBordersOperation) execute() {
+func (op loopCheckBordersOperation) execute() {
 	if op.innerOperation.mem.cells[op.innerOperation.mem.pointer] == 0 {
 		op.innerOperation.repeat = false
+	} else {
+		op.innerOperation.repeat = true
 	}
 }
