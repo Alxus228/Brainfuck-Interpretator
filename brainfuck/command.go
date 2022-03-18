@@ -3,11 +3,10 @@ package brainfuck
 import "fmt"
 
 type command interface {
-	execute()
+	execute(mem *memmory)
 }
 
 type operation struct {
-	mem     *memmory
 	execute func()
 }
 
@@ -30,56 +29,56 @@ type loopOperation struct { // [
 	repeat    bool
 }
 
-func (op incrementOperation) execute() {
-	op.mem.cells[op.mem.pointer]++
+func (op incrementOperation) execute(mem *memmory) {
+	mem.cells[mem.pointer]++
 }
 
-func (op decrementOperation) execute() {
-	op.mem.cells[op.mem.pointer]--
+func (op decrementOperation) execute(mem *memmory) {
+	mem.cells[mem.pointer]--
 }
-func (op incrementDataPointerOperation) execute() {
-	op.mem.pointer++
-}
-
-func (op decrementDataPointerOperation) execute() {
-	op.mem.pointer--
+func (op incrementDataPointerOperation) execute(mem *memmory) {
+	mem.pointer++
 }
 
-func (op outputOperation) execute() {
-	fmt.Printf("%c", op.mem.cells[op.mem.pointer])
+func (op decrementDataPointerOperation) execute(mem *memmory) {
+	mem.pointer--
+}
+
+func (op outputOperation) execute(mem *memmory) {
+	//fmt.Printf("%c", mem.cells[mem.pointer])
 	//debug
-	//fmt.Printf("%d", op.mem.cells[op.mem.pointer])
+	fmt.Printf("%d", mem.cells[mem.pointer])
 }
 
-func (op inputOperation) execute() {
-	fmt.Scanf("%c", &op.mem.cells[op.mem.pointer])
+func (op inputOperation) execute(mem *memmory) {
+	fmt.Scanf("%c", &mem.cells[mem.pointer])
 }
 
-func (op zeroOperation) execute() {
-	op.mem.cells[op.mem.pointer] = 0
+func (op zeroOperation) execute(mem *memmory) {
+	mem.cells[mem.pointer] = 0
 }
 
-func (op copyOperation) execute() {
-	copyPasteAccumulator = op.mem.cells[op.mem.pointer]
+func (op copyOperation) execute(mem *memmory) {
+	copyPasteAccumulator = mem.cells[mem.pointer]
 }
 
-func (op pasteOperation) execute() {
+func (op pasteOperation) execute(mem *memmory) {
 	if copyPasteAccumulator != 0 {
-		op.mem.cells[op.mem.pointer] = copyPasteAccumulator
+		mem.cells[mem.pointer] = copyPasteAccumulator
 	}
 }
 
-func (op loopOperation) execute() {
+func (op loopOperation) execute(mem *memmory) {
 	for op.repeat {
 		for _, innerOperation := range op.innerLoop {
-			innerOperation.execute()
+			innerOperation.execute(mem)
 		}
 	}
 }
 
-func (op loopCheckBordersOperation) execute() {
+func (op loopCheckBordersOperation) execute(mem *memmory) {
 	//fmt.Println(op.innerOperation.mem)
-	if op.innerOperation.mem.cells[op.innerOperation.mem.pointer] == 0 {
+	if mem.cells[mem.pointer] == 0 {
 		op.innerOperation.repeat = false
 	} else {
 		op.innerOperation.repeat = true
