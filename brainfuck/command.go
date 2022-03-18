@@ -73,7 +73,7 @@ func (op loopOperation) execute() {
 }
 
 func (op loopCheckLoopBordersOperation) execute() {
-	if op.innerOperation.mem.cells[op.innerOperation.mem.pointer] != 0 {
-		op.innerOperation.repeat = true
+	if op.innerOperation.mem.cells[op.innerOperation.mem.pointer] == 0 {
+		op.innerOperation.repeat = false
 	}
 }

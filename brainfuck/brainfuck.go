@@ -2,7 +2,6 @@ package brainfuck
 
 import (
 	"fmt"
-	"reflect"
 )
 
 var executableCommands = map[rune]command{
@@ -35,13 +34,11 @@ var memmorySet memmory
 var codePointer int
 
 var copyPasteAccumulator byte
-var commands []command
 var currentLoop = []loopOperation{
 	{operation: operation{mem: &memmorySet}},
 }
 
 func Brainfuck(code string) {
-
 	interpetate(code)
 	compile()
 }
@@ -54,7 +51,8 @@ func interpetate(code string) {
 		case loopOperation:
 			currentLoop = append([]loopOperation{t}, currentLoop...)
 		case loopCheckLoopBordersOperation:
-			currentLoop[1].innerLoop = append(currentLoop[1].innerLoop, t, currentLoop[0], t)
+			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, newCommand)
+			currentLoop[1].innerLoop = append(currentLoop[1].innerLoop, currentLoop[0])
 			currentLoop = currentLoop[1:]
 		default:
 			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, newCommand)
@@ -65,6 +63,6 @@ func interpetate(code string) {
 func compile() {
 	for _, com := range currentLoop[0].innerLoop {
 		com.execute()
-		fmt.Println(reflect.TypeOf(com))
+		fmt.Println()
 	}
 }
