@@ -84,5 +84,3 @@ func (op loopCheckBordersOperation) execute() {
 		op.innerOperation.repeat = true
 	}
 }
-
-//end

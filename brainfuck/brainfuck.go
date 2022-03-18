@@ -55,10 +55,10 @@ func interpetate(code string) {
 		case loopOperation:
 			currentLoop = append([]loopOperation{t}, currentLoop...)
 			*currentLoop[0].mem = *currentLoop[1].mem
-			check := loopCheckBordersOperation{innerOperation: &currentLoop[0]}
+			check := loopCheckBordersOperation{innerOperation: &currentLoop[0], operation: operation{mem: &memmorySet}}
 			currentLoop[1].innerLoop = append(currentLoop[1].innerLoop, check)
 		case loopCheckBordersOperation:
-			*t.innerOperation = currentLoop[0]
+			t.innerOperation = &currentLoop[0]
 			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, t)
 			currentLoop[1].innerLoop = append(currentLoop[1].innerLoop, currentLoop[0])
 			currentLoop = currentLoop[1:]
@@ -89,5 +89,3 @@ func compile() {
 		}
 	}
 }
-
-//end
