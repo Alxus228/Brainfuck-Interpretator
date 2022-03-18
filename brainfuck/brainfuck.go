@@ -21,7 +21,10 @@ var executableCommands = map[rune]command{
 	//The beginning of loop
 	'[': loopOperation{operation: operation{mem: &memmorySet}},
 	//The end of loop
-	']': loopCheckBordersOperation{&currentLoop[0]},
+	']': loopCheckBordersOperation{
+		operation:      operation{mem: &memmorySet},
+		innerOperation: &currentLoop[0],
+	},
 	//All the functions implemented after the ']', are not implemented in original Brainfuck language
 	//Clear operation
 	'0': zeroOperation{operation{mem: &memmorySet}},
@@ -51,13 +54,11 @@ func interpetate(code string) {
 		switch t := newCommand.(type) {
 		case loopOperation:
 			currentLoop = append([]loopOperation{t}, currentLoop...)
+			*currentLoop[0].mem = *currentLoop[1].mem
 			check := loopCheckBordersOperation{innerOperation: &currentLoop[0]}
-			check.execute()
-			//debug
-			fmt.Println(currentLoop[0].repeat)
-			fmt.Println(*check.innerOperation)
+			currentLoop[1].innerLoop = append(currentLoop[1].innerLoop, check)
 		case loopCheckBordersOperation:
-			t.innerOperation = &currentLoop[0]
+			*t.innerOperation = currentLoop[0]
 			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, t)
 			currentLoop[1].innerLoop = append(currentLoop[1].innerLoop, currentLoop[0])
 			currentLoop = currentLoop[1:]
@@ -72,13 +73,18 @@ func compile() {
 		com.execute()
 
 		fmt.Print(reflect.TypeOf(com))
-		fmt.Print(currentLoop[0].mem.cells[currentLoop[0].mem.pointer])
-		fmt.Println(currentLoop[0].mem.pointer)
+		fmt.Print(com)
+		fmt.Printf(" %d %d\n", currentLoop[0].mem.cells[currentLoop[0].mem.pointer], currentLoop[0].mem.pointer)
 		switch t := com.(type) {
 		case loopOperation:
-			fmt.Println(t.mem, t.repeat)
+			fmt.Println(&t.mem, t.repeat)
 			for _, funct := range t.innerLoop {
-				fmt.Println(reflect.TypeOf(funct))
+				fmt.Print(reflect.TypeOf(funct))
+				fmt.Println(funct)
+				switch s := funct.(type) {
+				case loopCheckBordersOperation:
+					fmt.Println(&s.innerOperation.mem, s.innerOperation.repeat)
+				}
 			}
 		}
 	}
