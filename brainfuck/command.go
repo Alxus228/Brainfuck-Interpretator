@@ -19,11 +19,8 @@ type inputOperation struct{ operation }                // ,
 type zeroOperation struct{ operation }                 // 0
 type copyOperation struct{ operation }                 // c
 type pasteOperation struct{ operation }                // p
-type loopCheckBordersOperation struct {                // ]
-	innerOperation *loopOperation
-	operation
-}
-type loopOperation struct { // [
+type endLoopOperation struct{ operation }              // ]
+type loopOperation struct {                            // [
 	operation
 	innerLoop []command
 	repeat    bool
@@ -45,9 +42,7 @@ func (op decrementDataPointerOperation) execute(mem *memmory) {
 }
 
 func (op outputOperation) execute(mem *memmory) {
-	//fmt.Printf("%c", mem.cells[mem.pointer])
-	//debug
-	fmt.Printf("%d", mem.cells[mem.pointer])
+	fmt.Printf("%c", mem.cells[mem.pointer])
 }
 
 func (op inputOperation) execute(mem *memmory) {
@@ -69,18 +64,11 @@ func (op pasteOperation) execute(mem *memmory) {
 }
 
 func (op loopOperation) execute(mem *memmory) {
-	for op.repeat {
+	for mem.cells[mem.pointer] != 0 {
 		for _, innerOperation := range op.innerLoop {
 			innerOperation.execute(mem)
 		}
 	}
 }
 
-func (op loopCheckBordersOperation) execute(mem *memmory) {
-	//fmt.Println(op.innerOperation.mem)
-	if mem.cells[mem.pointer] == 0 {
-		op.innerOperation.repeat = false
-	} else {
-		op.innerOperation.repeat = true
-	}
-}
+func (op endLoopOperation) execute(mem *memmory) {}
