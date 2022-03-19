@@ -16,9 +16,9 @@ type incrementDataPointerOperation struct{ operation } // >
 type decrementDataPointerOperation struct{ operation } // <
 type outputOperation struct{ operation }               // .
 type inputOperation struct{ operation }                // ,
-type zeroOperation struct{ operation }                 // 0
 type copyOperation struct{ operation }                 // c
 type pasteOperation struct{ operation }                // p
+type zeroOperation struct{ operation }                 // 0
 type endLoopOperation struct{ operation }              // ]
 type loopOperation struct {                            // [
 	operation

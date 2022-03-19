@@ -18,12 +18,12 @@ var executableCommands = map[rune]command{
 	//The end of loop
 	']': endLoopOperation{},
 	//All the functions implemented after the ']', are not implemented in original Brainfuck language
-	//Clear operation
-	'0': zeroOperation{},
 	//Copy operation
 	'c': copyOperation{},
 	//Paste operation
 	'p': pasteOperation{},
+	//Clear operation
+	'0': zeroOperation{},
 }
 
 var memmorySet memmory
