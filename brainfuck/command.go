@@ -7,7 +7,7 @@ type command interface {
 }
 
 type operation struct {
-	execute func()
+	execute func(mem *memmory)
 }
 
 type incrementOperation struct{ operation }            // +
