@@ -2,69 +2,82 @@ package brainfuck
 
 import "fmt"
 
+// Interface command describes method execute() that recieves memmory pointer mem.
+//
+// The method execute() is called in compiling part of the interpretator,
+// so inherit this interface if you want to add a new operation.
 type command interface {
-	execute()
+	execute(mem *memmory)
 }
 
-type operation struct {
-	mem *memmory
-}
-
-type incrementOperation struct{ operation }            // +
-type decrementOperation struct{ operation }            // -
-type incrementDataPointerOperation struct{ operation } // >
-type decrementDataPointerOperation struct{ operation } // <
-type outputOperation struct{ operation }               // .
-type inputOperation struct{ operation }                // ,
-type zeroOperation struct{ operation }                 // 0
-type copyOperation struct{ operation }                 // c
-type pasteOperation struct{ operation }                // p
-type loopOperation struct {
+// Type increment implements increasing data by 1.
+type increment struct{} // It relates to the '+' character.
+// Type decrement implements decreasing data by 1.
+type decrement struct{} // It relates to the '-' character.
+// Type incrementDataPointer implements increasing data pointer by 1.
+type incrementDataPointer struct{} // It relates to the '>' character.
+// Type decrementDataPointer implements decreasing data pointer by 1.
+type decrementDataPointer struct{} // It relates to the '<' character.
+// Type output implements printing 1 character.
+type output struct{} // It relates to the '.' character.
+// Type input implements input value assigment to the current data cells.
+type input struct{} // It relates to the ',' character.
+// Type copy implements copying the current data byte into the buffer.
+type copy struct{} // It relates to the 'c' character.
+// Type paste implements copying the buffer value into the current data byte.
+type paste struct{} // It relates to the 'p' character.
+// Type zero implements setting to 0 the current data byte.
+type zero struct{} // It relates to the '0' character.
+// Type endLoop implements nothing and needed only for interpretate() to recognize the bounds of a loop.
+type endLoop struct{} // It relates to the ']' character.
+// Type loop implements innerLoop variable - a slice of commands which can be executed in execute() method.
+type loop struct {
 	innerLoop []command
-	repeat    bool
+} // It relates to the '[' character.
+
+func (com increment) execute(mem *memmory) {
+	mem.cells[mem.pointer]++
 }
 
-func (op *incrementOperation) execute() {
-	op.mem.cells[op.mem.pointer]++
+func (com decrement) execute(mem *memmory) {
+	mem.cells[mem.pointer]--
+}
+func (com incrementDataPointer) execute(mem *memmory) {
+	mem.pointer++
 }
 
-func (op *decrementOperation) execute() {
-	op.mem.cells[op.mem.pointer]--
-}
-func (op *incrementDataPointerOperation) execute() {
-	op.mem.pointer++
+func (com decrementDataPointer) execute(mem *memmory) {
+	mem.pointer--
 }
 
-func (op *decrementDataPointerOperation) execute() {
-	op.mem.pointer--
+func (com output) execute(mem *memmory) {
+	fmt.Printf("%c", mem.cells[mem.pointer])
 }
 
-func (op *outputOperation) execute() {
-	fmt.Printf("%c", op.mem.cells[op.mem.pointer])
+func (com input) execute(mem *memmory) {
+	fmt.Scanf("%c", &mem.cells[mem.pointer])
 }
 
-func (op *inputOperation) execute() {
-	fmt.Scanf("%c", &op.mem.cells[op.mem.pointer])
+func (com zero) execute(mem *memmory) {
+	mem.cells[mem.pointer] = 0
 }
 
-func (op *zeroOperation) execute() {
-	op.mem.cells[op.mem.pointer] = 0
+func (com copy) execute(mem *memmory) {
+	copyPasteAccumulator = mem.cells[mem.pointer]
 }
 
-func (op *copyOperation) execute() {
-	copyPasteAccumulator = op.mem.cells[op.mem.pointer]
-}
-
-func (op *pasteOperation) execute() {
+func (com paste) execute(mem *memmory) {
 	if copyPasteAccumulator != 0 {
-		op.mem.cells[op.mem.pointer] = copyPasteAccumulator
+		mem.cells[mem.pointer] = copyPasteAccumulator
 	}
 }
 
-func (op *loopOperation) execute() {
-	for op.repeat {
-		for _, innerOperation := range op.innerLoop {
-			innerOperation.execute()
+func (com loop) execute(mem *memmory) {
+	for mem.cells[mem.pointer] != 0 {
+		for _, innerCommand := range com.innerLoop {
+			innerCommand.execute(mem)
 		}
 	}
 }
+
+func (com endLoop) execute(mem *memmory) {}
