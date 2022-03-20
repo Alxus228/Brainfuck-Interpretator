@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-//Test of the Interpretator
+// Test of the interpreter
 func TestBrainfuck(t *testing.T) {
 	rescueStdout := os.Stdout
 	r, w, _ := os.Pipe()
