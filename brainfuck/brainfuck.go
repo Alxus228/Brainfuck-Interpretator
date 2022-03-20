@@ -2,51 +2,51 @@ package brainfuck
 
 var executableCommands = map[rune]command{
 	//Increment operation
-	'+': incrementOperation{},
+	'+': increment{},
 	//Decrement operation
-	'-': decrementOperation{},
+	'-': decrement{},
 	//Increment data pointer operation
-	'>': incrementDataPointerOperation{},
+	'>': incrementDataPointer{},
 	//Decrement data pointer operation
-	'<': decrementDataPointerOperation{},
+	'<': decrementDataPointer{},
 	//Output operation
-	'.': outputOperation{},
+	'.': output{},
 	//Input operation
-	',': inputOperation{},
+	',': input{},
 	//The beginning of loop
-	'[': loopOperation{},
+	'[': loop{},
 	//The end of loop
-	']': endLoopOperation{},
+	']': endLoop{},
 	//All the functions implemented after the ']', are not implemented in original Brainfuck language
 	//Copy operation
-	'c': copyOperation{},
+	'c': copy{},
 	//Paste operation
-	'p': pasteOperation{},
+	'p': paste{},
 	//Clear operation
-	'0': zeroOperation{},
+	'0': zero{},
 }
 
 var memmorySet memmory
 var codePointer int
 
 var copyPasteAccumulator byte
-var currentLoop = []loopOperation{
+var currentLoop = []loop{
 	{},
 }
 
 func Brainfuck(code string) {
-	interpetate(code)
+	interpretate(code)
 	compile()
 }
 
 //function to call
-func interpetate(code string) {
+func interpretate(code string) {
 	for codePointer = 0; codePointer < len(code); codePointer++ {
 		var newCommand = executableCommands[rune(code[codePointer])]
 		switch t := newCommand.(type) {
-		case loopOperation:
-			currentLoop = append([]loopOperation{t}, currentLoop...)
-		case endLoopOperation:
+		case loop:
+			currentLoop = append([]loop{t}, currentLoop...)
+		case endLoop:
 			currentLoop[1].innerLoop = append(currentLoop[1].innerLoop, currentLoop[0])
 			currentLoop = currentLoop[1:]
 		default:

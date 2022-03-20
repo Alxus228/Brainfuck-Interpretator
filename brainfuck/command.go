@@ -10,64 +10,74 @@ type command interface {
 	execute(mem *memmory)
 }
 
-type incrementOperation struct{}            // +
-type decrementOperation struct{}            // -
-type incrementDataPointerOperation struct{} // >
-type decrementDataPointerOperation struct{} // <
-type outputOperation struct{}               // .
-type inputOperation struct{}                // ,
-type copyOperation struct{}                 // c
-type pasteOperation struct{}                // p
-type zeroOperation struct{}                 // 0
-type endLoopOperation struct{}              // ]
-type loopOperation struct {                 // [
+// Type increment implements increasing data by 1.
+type increment struct{} // It relates to the '+' character.
+// Type decrement implements decreasing data by 1.
+type decrement struct{} // It relates to the '-' character.
+// Type incrementDataPointer implements increasing data pointer by 1.
+type incrementDataPointer struct{} // It relates to the '>' character.
+// Type decrementDataPointer implements decreasing data pointer by 1.
+type decrementDataPointer struct{} // It relates to the '<' character.
+// Type output implements printing 1 character.
+type output struct{} // It relates to the '.' character.
+// Type input implements input value assigment to the current data cells.
+type input struct{} // It relates to the ',' character.
+// Type copy implements copying the current data byte into the buffer.
+type copy struct{} // It relates to the 'c' character.
+// Type paste implements copying the buffer value into the current data byte.
+type paste struct{} // It relates to the 'p' character.
+// Type zero implements setting to 0 the current data byte.
+type zero struct{} // It relates to the '0' character.
+// Type endLoop implements nothing and needed only for interpretate() to recognize the bounds of a loop.
+type endLoop struct{} // It relates to the ']' character.
+// Type loop implements innerLoop variable - a slice of commands which can be executed in execute() method.
+type loop struct {
 	innerLoop []command
-	repeat    bool
-}
+} // It relates to the '[' character.
 
-func (op incrementOperation) execute(mem *memmory) {
+func (com increment) execute(mem *memmory) {
 	mem.cells[mem.pointer]++
 }
 
-func (op decrementOperation) execute(mem *memmory) {
+func (com decrement) execute(mem *memmory) {
 	mem.cells[mem.pointer]--
 }
-func (op incrementDataPointerOperation) execute(mem *memmory) {
+func (com incrementDataPointer) execute(mem *memmory) {
 	mem.pointer++
 }
 
-func (op decrementDataPointerOperation) execute(mem *memmory) {
+func (com decrementDataPointer) execute(mem *memmory) {
 	mem.pointer--
 }
 
-func (op outputOperation) execute(mem *memmory) {
+func (com output) execute(mem *memmory) {
 	fmt.Printf("%c", mem.cells[mem.pointer])
 }
 
-func (op inputOperation) execute(mem *memmory) {
+func (com input) execute(mem *memmory) {
 	fmt.Scanf("%c", &mem.cells[mem.pointer])
 }
 
-func (op zeroOperation) execute(mem *memmory) {
+func (com zero) execute(mem *memmory) {
 	mem.cells[mem.pointer] = 0
 }
 
-func (op copyOperation) execute(mem *memmory) {
+func (com copy) execute(mem *memmory) {
 	copyPasteAccumulator = mem.cells[mem.pointer]
 }
 
-func (op pasteOperation) execute(mem *memmory) {
+func (com paste) execute(mem *memmory) {
 	if copyPasteAccumulator != 0 {
 		mem.cells[mem.pointer] = copyPasteAccumulator
 	}
 }
 
-func (op loopOperation) execute(mem *memmory) {
+func (com loop) execute(mem *memmory) {
 	for mem.cells[mem.pointer] != 0 {
-		for _, innerOperation := range op.innerLoop {
-			innerOperation.execute(mem)
+		for _, innerCommand := range com.innerLoop {
+			innerCommand.execute(mem)
 		}
 	}
 }
 
-func (op endLoopOperation) execute(mem *memmory) {}
+func (com endLoop) execute(mem *memmory) {}
