@@ -2,26 +2,25 @@ package brainfuck
 
 import "fmt"
 
+// Interface command describes method execute() that recieves memmory pointer mem.
+//
+// The method execute() is called in compiling part of the interpretator,
+// so inherit this interface if you want to add a new operation.
 type command interface {
 	execute(mem *memmory)
 }
 
-type operation struct {
-	execute func(mem *memmory)
-}
-
-type incrementOperation struct{ operation }            // +
-type decrementOperation struct{ operation }            // -
-type incrementDataPointerOperation struct{ operation } // >
-type decrementDataPointerOperation struct{ operation } // <
-type outputOperation struct{ operation }               // .
-type inputOperation struct{ operation }                // ,
-type copyOperation struct{ operation }                 // c
-type pasteOperation struct{ operation }                // p
-type zeroOperation struct{ operation }                 // 0
-type endLoopOperation struct{ operation }              // ]
-type loopOperation struct {                            // [
-	operation
+type incrementOperation struct{}            // +
+type decrementOperation struct{}            // -
+type incrementDataPointerOperation struct{} // >
+type decrementDataPointerOperation struct{} // <
+type outputOperation struct{}               // .
+type inputOperation struct{}                // ,
+type copyOperation struct{}                 // c
+type pasteOperation struct{}                // p
+type zeroOperation struct{}                 // 0
+type endLoopOperation struct{}              // ]
+type loopOperation struct {                 // [
 	innerLoop []command
 	repeat    bool
 }

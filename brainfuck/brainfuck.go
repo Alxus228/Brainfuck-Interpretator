@@ -31,7 +31,7 @@ var codePointer int
 
 var copyPasteAccumulator byte
 var currentLoop = []loopOperation{
-	{operation: operation{}},
+	{},
 }
 
 func Brainfuck(code string) {
