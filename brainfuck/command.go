@@ -81,3 +81,6 @@ func (com loop) execute(mem *memmory) {
 }
 
 func (com endLoop) execute(mem *memmory) {}
+
+// This variable is needed for copy and paste commands.
+var copyPasteAccumulator byte

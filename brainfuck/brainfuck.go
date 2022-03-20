@@ -30,10 +30,6 @@ var executableCommands = map[rune]command{
 // The memmory set we're going to use everywhere.
 var memmorySet memmory
 
-// This variable is needed for copy and paste commands and can't
-// be deleted or renamed without modification of those commands.
-var copyPasteAccumulator byte
-
 // This slice of loops we're going to use as a stack for
 // loop commands in which we will append commands inside "[]".
 //
@@ -55,6 +51,7 @@ func Brainfuck(code string) {
 func interpretate(code string) {
 	for codePointer := 0; codePointer < len(code); codePointer++ {
 		var newCommand = executableCommands[rune(code[codePointer])]
+
 		// depending on the type we will process commands differently
 		switch t := newCommand.(type) {
 		case loop:
@@ -73,7 +70,7 @@ func interpretate(code string) {
 	}
 }
 
-// Function compile execute all commands from the main loop.
+// Function compile execute all commands in the main loop.
 func compile() {
 	for _, com := range currentLoop[0].innerLoop {
 		com.execute(&memmorySet)
