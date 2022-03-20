@@ -70,7 +70,7 @@ func interpretate(code string) {
 	}
 }
 
-// Function compile execute all commands from the main loop.
+// Function compile execute all commands in the main loop.
 func compile() {
 	for _, com := range currentLoop[0].innerLoop {
 		com.execute(&memmorySet)
