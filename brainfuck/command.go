@@ -44,10 +44,16 @@ func (com decrement) execute(mem *memmory) {
 }
 func (com incrementDataPointer) execute(mem *memmory) {
 	mem.pointer++
+	// protection against index out of range
+	mem.pointer %= cellsSize
 }
 
 func (com decrementDataPointer) execute(mem *memmory) {
 	mem.pointer--
+	// protection against negative index
+	if mem.pointer < 0 {
+		mem.pointer = cellsSize - 1
+	}
 }
 
 func (com output) execute(mem *memmory) {
