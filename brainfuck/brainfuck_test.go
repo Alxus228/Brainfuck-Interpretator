@@ -75,17 +75,39 @@ func TestCopyPasteExecute(t *testing.T) {
 		mem.pointer = test.pointer
 		mem.cells[mem.pointer] = test.value
 
-		test.com.execute(&mem)
-
-		switch t := test.com.(type) {
+		switch c := test.com.(type) {
 		case copy:
+			c.execute(&mem)
 			if copyPasteAccumulator != test.expected {
 				t.Errorf("Expected %d, but got %d", test.expected, copyPasteAccumulator)
 			}
 		case paste:
+			c.execute(&mem)
 			if mem.cells[mem.pointer] != test.expected {
 				t.Errorf("Expected %d, but got %d", test.expected, mem.cells[mem.pointer])
 			}
 		}
+	}
+}
+
+func TestOutput(t *testing.T) {
+	rescueStdout := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	var com output
+	var mem memmory
+
+	mem.pointer = 0
+	mem.cells[mem.pointer] = 100
+
+	com.execute(&mem)
+
+	w.Close()
+	out, _ := ioutil.ReadAll(r)
+	os.Stdout = rescueStdout
+
+	if out[0] != 100 {
+		t.Errorf("Expected %d, but got %d", 100, mem.cells[mem.pointer])
 	}
 }
