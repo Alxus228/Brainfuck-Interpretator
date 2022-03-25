@@ -7,12 +7,12 @@ import (
 )
 
 // Test of the interpreter
-func TestBrainfuck(t *testing.T) {
+func TestInterpret(t *testing.T) {
 	rescueStdout := os.Stdout
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 
-	Brainfuck("+++++c>p++++++[-<+>]<.")
+	Interpret("+++++c>p++++++[-<+>]<.")
 
 	w.Close()
 	out, _ := ioutil.ReadAll(r)
@@ -39,6 +39,8 @@ func TestExecute(t *testing.T) {
 		{new(incrementDataPointer), 199, 10, 0},
 		{new(decrementDataPointer), 0, 0, 10},
 		{new(decrementDataPointer), 2, 0, 4},
+		{new(zero), 3, 13, 0},
+		{new(zero), 87, 87, 0},
 	}
 
 	for _, test := range executeTests {
