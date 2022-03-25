@@ -39,16 +39,10 @@ var currentLoop = []loop{
 	{}, // this is the main loop
 }
 
-// Brainfuck function interpretates and compiles brainfuck code.
+// This function interpretates and compiles brainfuck code.
 //
 // Specification of the language can be found on Wiki: https://en.wikipedia.org/wiki/Brainfuck.
-func Brainfuck(code string) {
-	interpretate(code)
-	compile()
-}
-
-// Function interpretate transforms string into commands and appends them into the main loop
-func interpretate(code string) {
+func Interpret(code string) {
 	for codePointer := 0; codePointer < len(code); codePointer++ {
 		var newCommand = executableCommands[rune(code[codePointer])]
 
@@ -68,6 +62,8 @@ func interpretate(code string) {
 			currentLoop[0].innerLoop = append(currentLoop[0].innerLoop, newCommand)
 		}
 	}
+
+	compile()
 }
 
 // Function compile execute all commands in the main loop.
