@@ -54,3 +54,38 @@ func TestExecute(t *testing.T) {
 		}
 	}
 }
+
+func TestCopyPasteExecute(t *testing.T) {
+	mem := memmory{}
+
+	executeTests := []struct {
+		com             command
+		pointer         int
+		value, expected byte
+	}{
+		{new(copy), 0, 14, 14},
+		{new(paste), 1, 20, 14},
+		{new(copy), 2, 255, 255},
+		{new(paste), 3, 254, 255},
+		{new(copy), 10, 70, 70},
+		{new(paste), 20, 0, 70},
+	}
+
+	for _, test := range executeTests {
+		mem.pointer = test.pointer
+		mem.cells[mem.pointer] = test.value
+
+		test.com.execute(&mem)
+
+		switch t := test.com.(type) {
+		case copy:
+			if copyPasteAccumulator != test.expected {
+				t.Errorf("Expected %d, but got %d", test.expected, copyPasteAccumulator)
+			}
+		case paste:
+			if mem.cells[mem.pointer] != test.expected {
+				t.Errorf("Expected %d, but got %d", test.expected, mem.cells[mem.pointer])
+			}
+		}
+	}
+}
