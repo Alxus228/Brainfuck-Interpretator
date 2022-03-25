@@ -111,3 +111,42 @@ func TestOutput(t *testing.T) {
 		t.Errorf("Expected %d, but got %d", 100, mem.cells[mem.pointer])
 	}
 }
+
+func TestLoopExecute(t *testing.T) {
+	mem := memmory{}
+
+	executeTests := []struct {
+		com             command
+		pointer         int
+		value, expected byte
+	}{
+		{
+			//move value from one cell to another
+			loop{
+				[]command{incrementDataPointer{}, increment{}, decrementDataPointer{}, decrement{}},
+			},
+			0,
+			3,
+			0},
+
+		{
+			//increment so many times that value becomes zero
+			loop{
+				[]command{increment{}},
+			},
+			0,
+			100,
+			0},
+	}
+
+	for _, test := range executeTests {
+		mem.pointer = test.pointer
+		mem.cells[mem.pointer] = test.value
+
+		test.com.execute(&mem)
+
+		if mem.cells[mem.pointer] != test.expected {
+			t.Errorf("Expected %d, but got %d", test.expected, mem.cells[mem.pointer])
+		}
+	}
+}
