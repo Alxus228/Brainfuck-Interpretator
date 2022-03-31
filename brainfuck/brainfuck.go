@@ -4,6 +4,19 @@ package brainfuck
 //
 // Specification of the language can be found on Wiki: https://en.wikipedia.org/wiki/Brainfuck.
 func Interpret(code string) {
+	// The memory set we're going to use everywhere.
+	var memorySet memory
+
+	// This slice of loops we're going to use as a stack for
+	// loop commands in which we will append commands inside "[]".
+	//
+	// After the interpretation we will execute it, but not with the
+	// currentLoop[0].execute(memorySet), because we don't need to repeat it
+	var currentLoop = []loop{
+		{}, // this is the main loop
+	}
+
+	// this is a cycle, in which we, depending on the symbol of 'code' string, push commands into the currentLoop stack
 	for codePointer := 0; codePointer < len(code); codePointer++ {
 		var newCommand = executableCommands[rune(code[codePointer])]
 
@@ -24,7 +37,14 @@ func Interpret(code string) {
 		}
 	}
 
-	compile()
+	compile(currentLoop[0].innerLoop, &memorySet)
+}
+
+// Function compile execute all commands in the main loop.
+func compile(mainLoop []command, mem *memory) {
+	for _, com := range mainLoop {
+		com.execute(mem)
+	}
 }
 
 // This map contains empty structures that inherit command interface
@@ -52,23 +72,4 @@ var executableCommands = map[rune]command{
 	'p': paste{},
 	// clear
 	'0': zero{},
-}
-
-// The memory set we're going to use everywhere.
-var memorySet memory
-
-// This slice of loops we're going to use as a stack for
-// loop commands in which we will append commands inside "[]".
-//
-// After the interpretation we will execute it, but not with the
-// currentLoop[0].execute(memorySet), because we don't need to repeat it
-var currentLoop = []loop{
-	{}, // this is the main loop
-}
-
-// Function compile execute all commands in the main loop.
-func compile() {
-	for _, com := range currentLoop[0].innerLoop {
-		com.execute(&memorySet)
-	}
 }
