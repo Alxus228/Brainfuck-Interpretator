@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/Alxus228/Brainfuck/brainfuck"
+	"github.com/Alxus228/Brainfuck-Interpretator/brainfuck"
 )
 
 func main() {
-	brainfuck.Interpetate("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
+	brainfuck.Interpret("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.c>p.")
 }

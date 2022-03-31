@@ -1,0 +1,2 @@
+#excluding .idea directory from the project
+.idea
