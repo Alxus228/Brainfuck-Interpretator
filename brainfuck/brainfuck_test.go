@@ -24,7 +24,7 @@ func TestInterpret(t *testing.T) {
 }
 
 func TestExecute(t *testing.T) {
-	mem := memmory{}
+	mem := memory{}
 
 	executeTests := []struct {
 		com             command
@@ -56,7 +56,7 @@ func TestExecute(t *testing.T) {
 }
 
 func TestCopyPasteExecute(t *testing.T) {
-	mem := memmory{}
+	mem := memory{}
 
 	executeTests := []struct {
 		com             command
@@ -96,7 +96,7 @@ func TestOutput(t *testing.T) {
 	os.Stdout = w
 
 	var com output
-	var mem memmory
+	var mem memory
 
 	mem.pointer = 0
 	mem.cells[mem.pointer] = 100
@@ -113,7 +113,7 @@ func TestOutput(t *testing.T) {
 }
 
 func TestLoopExecute(t *testing.T) {
-	mem := memmory{}
+	mem := memory{}
 
 	executeTests := []struct {
 		com             command

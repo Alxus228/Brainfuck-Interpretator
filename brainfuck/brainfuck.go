@@ -1,44 +1,5 @@
 package brainfuck
 
-// This map contains empty structures that inherit command interface
-var executableCommands = map[rune]command{
-	// increment
-	'+': increment{},
-	// decrement
-	'-': decrement{},
-	// increment data pointer
-	'>': incrementDataPointer{},
-	// decrement data pointer
-	'<': decrementDataPointer{},
-	// output
-	'.': output{},
-	// input
-	',': input{},
-	// the beginning of loop
-	'[': loop{},
-	// the end of loop
-	']': endLoop{},
-	// All the functions after the ']', are not implemented in original Brainfuck language
-	// copy
-	'c': copy{},
-	// paste
-	'p': paste{},
-	// clear
-	'0': zero{},
-}
-
-// The memmory set we're going to use everywhere.
-var memmorySet memmory
-
-// This slice of loops we're going to use as a stack for
-// loop commands in which we will append commands inside "[]".
-//
-// After the interpretation we will execute it, but not with the
-// currentLoop[0].execute(memmorySet), because we don't need to repeat it
-var currentLoop = []loop{
-	{}, // this is the main loop
-}
-
 // This function interpretates and compiles brainfuck code.
 //
 // Specification of the language can be found on Wiki: https://en.wikipedia.org/wiki/Brainfuck.
@@ -66,9 +27,48 @@ func Interpret(code string) {
 	compile()
 }
 
+// This map contains empty structures that inherit command interface
+var executableCommands = map[rune]command{
+	// increment
+	'+': increment{},
+	// decrement
+	'-': decrement{},
+	// increment data pointer
+	'>': incrementDataPointer{},
+	// decrement data pointer
+	'<': decrementDataPointer{},
+	// output
+	'.': output{},
+	// input
+	',': input{},
+	// the beginning of loop
+	'[': loop{},
+	// the end of loop
+	']': endLoop{},
+	// All the functions after the ']', are not implemented in original Brainfuck language
+	// copy
+	'c': copy{},
+	// paste
+	'p': paste{},
+	// clear
+	'0': zero{},
+}
+
+// The memory set we're going to use everywhere.
+var memorySet memory
+
+// This slice of loops we're going to use as a stack for
+// loop commands in which we will append commands inside "[]".
+//
+// After the interpretation we will execute it, but not with the
+// currentLoop[0].execute(memorySet), because we don't need to repeat it
+var currentLoop = []loop{
+	{}, // this is the main loop
+}
+
 // Function compile execute all commands in the main loop.
 func compile() {
 	for _, com := range currentLoop[0].innerLoop {
-		com.execute(&memmorySet)
+		com.execute(&memorySet)
 	}
 }

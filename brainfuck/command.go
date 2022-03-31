@@ -7,7 +7,7 @@ import "fmt"
 // The method execute() is called in compiling part of the interpretator,
 // so inherit this interface if you want to add a new operation.
 type command interface {
-	execute(mem *memmory)
+	execute(mem *memory)
 }
 
 // Type increment implements increasing data by 1.
@@ -35,20 +35,20 @@ type loop struct {
 	innerLoop []command
 } // It relates to the '[' character.
 
-func (com increment) execute(mem *memmory) {
+func (com increment) execute(mem *memory) {
 	mem.cells[mem.pointer]++
 }
 
-func (com decrement) execute(mem *memmory) {
+func (com decrement) execute(mem *memory) {
 	mem.cells[mem.pointer]--
 }
-func (com incrementDataPointer) execute(mem *memmory) {
+func (com incrementDataPointer) execute(mem *memory) {
 	mem.pointer++
 	// protection against index out of range
 	mem.pointer %= cellsSize
 }
 
-func (com decrementDataPointer) execute(mem *memmory) {
+func (com decrementDataPointer) execute(mem *memory) {
 	mem.pointer--
 	// protection against negative index
 	if mem.pointer < 0 {
@@ -56,29 +56,29 @@ func (com decrementDataPointer) execute(mem *memmory) {
 	}
 }
 
-func (com output) execute(mem *memmory) {
+func (com output) execute(mem *memory) {
 	fmt.Printf("%c", mem.cells[mem.pointer])
 }
 
-func (com input) execute(mem *memmory) {
+func (com input) execute(mem *memory) {
 	fmt.Scanf("%c", &mem.cells[mem.pointer])
 }
 
-func (com zero) execute(mem *memmory) {
+func (com zero) execute(mem *memory) {
 	mem.cells[mem.pointer] = 0
 }
 
-func (com copy) execute(mem *memmory) {
+func (com copy) execute(mem *memory) {
 	copyPasteAccumulator = mem.cells[mem.pointer]
 }
 
-func (com paste) execute(mem *memmory) {
+func (com paste) execute(mem *memory) {
 	if copyPasteAccumulator != 0 {
 		mem.cells[mem.pointer] = copyPasteAccumulator
 	}
 }
 
-func (com loop) execute(mem *memmory) {
+func (com loop) execute(mem *memory) {
 	for mem.cells[mem.pointer] != 0 {
 		for _, innerCommand := range com.innerLoop {
 			innerCommand.execute(mem)
@@ -86,7 +86,7 @@ func (com loop) execute(mem *memmory) {
 	}
 }
 
-func (com endLoop) execute(mem *memmory) {}
+func (com endLoop) execute(mem *memory) {}
 
 // This variable is needed for copy and paste commands.
 var copyPasteAccumulator byte
