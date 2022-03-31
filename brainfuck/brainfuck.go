@@ -1,8 +1,14 @@
-package brainfuck
-
-// This function interpretates and compiles brainfuck code.
+// Package brainfuck implements executing code, written in the same named language.
+// To use it, you should simply call function Interpret, with code that has to be
+// executed as parameter, in format of a string.
+//
+// If you want to assure yourself that the package works correctly, you can use
+// online brainfuck compiler: https://copy.sh/brainfuck/ or anything else you want.
 //
 // Specification of the language can be found on Wiki: https://en.wikipedia.org/wiki/Brainfuck.
+package brainfuck
+
+// Interpret is an API function that receives brainfuck code as a string argument, and executes it.
 func Interpret(code string) {
 	// This slice of loops we're going to use as a stack for
 	// loop commands in which we will append commands inside "[]".
