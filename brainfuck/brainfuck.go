@@ -4,9 +4,6 @@ package brainfuck
 //
 // Specification of the language can be found on Wiki: https://en.wikipedia.org/wiki/Brainfuck.
 func Interpret(code string) {
-	// The memory set we're going to use everywhere.
-	var memorySet memory
-
 	// This slice of loops we're going to use as a stack for
 	// loop commands in which we will append commands inside "[]".
 	//
@@ -16,7 +13,7 @@ func Interpret(code string) {
 		{}, // this is the main loop
 	}
 
-	// this is a cycle, in which we, depending on the symbol of 'code' string, push commands into the currentLoop stack
+	// this is a cycle, in which we, depending on the symbol from 'code' string, push commands into the currentLoop stack
 	for codePointer := 0; codePointer < len(code); codePointer++ {
 		var newCommand = executableCommands[rune(code[codePointer])]
 
@@ -37,13 +34,16 @@ func Interpret(code string) {
 		}
 	}
 
-	compile(currentLoop[0].innerLoop, &memorySet)
+	compile(currentLoop[0].innerLoop)
 }
 
 // Function compile execute all commands in the main loop.
-func compile(mainLoop []command, mem *memory) {
+func compile(mainLoop []command) {
+	// The memory set that we're going to pass to our commands.
+	var memorySet memory
+
 	for _, com := range mainLoop {
-		com.execute(mem)
+		com.execute(&memorySet)
 	}
 }
 
